@@ -31,7 +31,7 @@
         "sqlServerFQDN": "[concat(variables('sqlServerName'),'.database.windows.net')]",
         "sqlDBUser": "demoadmin",
         "sqlDBPass": "demoPassword$123!",
-        "packageUrl":"https://kbclouddata.blob.core.windows.net/package/HelloWorld.zip?st=2017-08-23T12%3A03%3A00Z&se=2017-10-24T12%3A03%3A00Z&sp=rl&sv=2016-05-31&sr=b&sig=cutDceifMYuYCLoLgX%2FRTteVOJE2jrJGRJ5BP7G9va4%3D"
+        "packageUrl":"https://github.com/kunalbabre/arm/blob/master/Exercises/5-ARM-PaaS/WebPackage/HelloWorld.zip?raw=true"      
 
     },
     "resources": [
@@ -152,7 +152,7 @@
             "location": "global",
             "properties": {
                 "profileStatus": "Enabled",
-                "trafficRoutingMethod": "Priority",
+                "trafficRoutingMethod": "Weighted",
                 "dnsConfig": {
                     "relativeName": "[parameters('uniqueDnsName')]",
                     "ttl": 30
