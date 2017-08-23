@@ -1,0 +1,186 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "uniqueDnsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Relative DNS name for the traffic manager profile, resulting FQDN will be <uniqueDnsName>.trafficmanager.net, must be globally unique."
+      }
+    },
+    "uniqueDnsNameForWebApp": {
+      "type": "string",
+      "metadata": {
+        "description": "Relative DNS name for the WebApps, must be globally unique.  An index will be appended for each Web App."
+      }
+    }
+  },
+    "variables": {
+        "webAppLocations": [
+            "West US",
+            "East US"
+        ],
+        "appInsightsName": "[concat('ai-', uniqueString(resourceGroup().id))]",
+        "sqlServerName": "[concat('sqlserver-', uniqueString(resourceGroup().id))]",
+        "appServicePlanName":"[concat('asp-',uniqueString(resourceGroup().id))]",
+        "sqlDBName": "myDB",
+        "sqlDBSize": {
+            "edition": "Basic",
+            "maxSize": "104857600"
+        },
+        "sqlServerFQDN": "[concat(variables('sqlServerName'),'.database.windows.net')]",
+        "sqlDBUser": "demoadmin",
+        "sqlDBPass": "demoPassword$123!",
+        "packageUrl":"https://kbclouddata.blob.core.windows.net/package/HelloWorld.zip?st=2017-08-23T12%3A03%3A00Z&se=2017-10-24T12%3A03%3A00Z&sp=rl&sv=2016-05-31&sr=b&sig=cutDceifMYuYCLoLgX%2FRTteVOJE2jrJGRJ5BP7G9va4%3D"
+
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/components",
+            "name": "[variables('appInsightsName')]",
+            "apiVersion": "2014-04-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ApplicationId": "[variables('appInsightsName')]",
+                "Application_Type": "web"
+            }
+        },
+        
+        {
+            "name": "[variables('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "administratorLogin": "[variables('sqlDBUser')]",
+                "administratorLoginPassword": "[variables('sqlDBPass')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "type": "firewallrules",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2014-04-01-preview",
+                    "name": "AllowAllWindowsAzureIps",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        },
+        
+        {
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2014-04-01",
+            "name": "[concat(variables('sqlServerName'),'/',variables('sqlDBName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers',variables('sqlServerName'))]"
+            ],
+            "properties": {
+                "edition": "Basic",
+                "maxSizeBytes": "[variables('sqlDBSize').maxSize]",
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+            },
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[concat(variables('appServicePlanName'), copyIndex())]",
+            "type": "Microsoft.Web/serverfarms",
+            "copy": {
+                "name": "farmloop",
+                "count": "[length(variables('webAppLocations'))]"
+            },
+            "location": "[variables('webAppLocations')[copyIndex()]]",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard"
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('uniqueDnsNameForWebApp'), copyIndex())]",
+            "type": "Microsoft.Web/sites",
+            "copy": {
+                "name": "siteloop",
+                "count": "[length(variables('webAppLocations'))]"
+            },
+            "location": "[variables('webAppLocations')[copyIndex()]]",
+            "dependsOn": [
+                "[concat(concat(variables('appServicePlanName'), copyIndex()))]"
+            ],
+            "properties": {
+                "serverFarmId": "[concat(concat(variables('appServicePlanName'), copyIndex()))]"
+            },
+            "resources": [
+                {
+                
+                    "name": "MSDeploy",
+                    "type": "extensions",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2015-08-01",
+                    "dependsOn": [ "[concat(parameters('uniqueDnsNameForWebApp'), copyIndex())]" ],
+                    "properties": {
+                        "packageUri": "[variables('packageUrl')]"
+                        }
+                },
+                {
+                    "name": "appsettings",
+                    "type": "config",
+                    "apiVersion": "2015-08-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat(parameters('uniqueDnsNameForWebApp'), copyIndex())]",
+                        "[concat('Microsoft.Web/sites/', concat(parameters('uniqueDnsNameForWebApp'), copyIndex()),'/extensions/MSDeploy')]"
+                    ],
+                    "properties": {
+                        "Application Insights Instrumentation Key": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')),'2014-04-01').InstrumentationKey]",
+                        "Application Insights Role": "[concat('web-', copyIndex())]",
+                        "dbConnectionString": "[concat('Encrypt=True;TrustServerCertificate=False;Data Source=', variables('sqlServerFQDN'), ',1433;Initial Catalog=',variables('sqlDBName'),';User Id=', variables('sqlDBUser'), ';Password=', variables('sqlDBPass'), ';')]"
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2015-11-01",
+            "type": "Microsoft.Network/trafficManagerProfiles",
+            "name": "ExampleTMProfile",
+            "location": "global",
+            "properties": {
+                "profileStatus": "Enabled",
+                "trafficRoutingMethod": "Priority",
+                "dnsConfig": {
+                    "relativeName": "[parameters('uniqueDnsName')]",
+                    "ttl": 30
+                },
+                "monitorConfig": {
+                    "protocol": "HTTP",
+                    "port": 80,
+                    "path": "/"
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-11-01",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "dependsOn": [
+                "Microsoft.Network/trafficManagerProfiles/ExampleTMProfile",
+                "[concat('Microsoft.Web/sites/', parameters('uniqueDnsNameForWebApp'), copyindex())]"
+            ],
+            "location": "global",
+            "name": "[concat('ExampleTMProfile/Endpoint', copyIndex())]",
+            "copy": {
+                "name": "endpointloop",
+                "count": "[length(variables('webAppLocations'))]"
+            },
+            "properties": {
+                "targetResourceId": "[resourceId('Microsoft.Web/sites/', concat(parameters('uniqueDnsNameForWebApp'), copyIndex()))]",
+                "endpointStatus": "Enabled"
+            }
+        }
+    ]
+}
