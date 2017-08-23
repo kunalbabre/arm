@@ -1,0 +1,48 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "unitPrice": {
+            "type": "int",
+            "metadata": {
+                "description": "Unit Price the item was sold on"
+            }
+        },
+        "unitCost": {
+            "type": "int",
+            "metadata": {
+                "description": "Unit Cost of an item"
+            }
+        },
+        "quantity": {
+            "type": "int",
+            "minValue": 1,
+            "metadata": {
+                "description": "Quantity Purchased"
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string"
+          },
+          "_artifactsLocationSasToken": {
+            "type": "securestring"
+          }
+    },
+    "variables": {
+        "baseURI": "[concat(parameters('_artifactsLocation'),'/Nested')]"
+        //"multiply-template": "[concat(variables('baseURI'),concat('/multiply-template.json',parameters('_artifactsLocationSasToken')))]",
+        //"subtract-template": "[concat(variables('baseURI'),concat('/subtract-template.json',parameters('_artifactsLocationSasToken')))]"
+        
+    },
+    "resources": [ ],
+    "outputs": {
+        "oProfitExpected":{
+            "type": "int",
+            "value": "[sub(mul(parameters('unitPrice'),parameters('quantity')),mul(parameters('unitCost'),parameters('quantity')))]"
+        }
+        // "oProfit":{
+        //     "type": "int",
+        //     "value": "0"
+        // }
+    }
+}

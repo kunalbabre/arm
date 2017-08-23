@@ -1,0 +1,85 @@
+//https://jsonschema.net/#/editor
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "id": "http://example.com/example.json",
+    "properties": {
+        "id": {
+            "id": "/properties/id",
+            "type": "integer",
+            "description": "Unique ID for contact"
+        },
+        "name": {
+            "id": "/properties/name",
+            "type": "string",
+            "description": "Full name of the contact",
+            "minLength":2
+        },
+        "age": {
+            "id": "/properties/age",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 125
+
+        },
+        "isBritish": {
+            "id": "/properties/isBritish",
+            "type": "boolean"
+        },
+        "billingAddress": {
+            "id": "/properties/billingAddress",
+            "properties": {
+                "city": {
+                    "id": "/properties/billingAddress/properties/city",
+                    "type": "string"
+                },
+                "country": {
+                    "id": "/properties/billingAddress/properties/country",
+                    "type": "string"
+                },
+                "street": {
+                    "id": "/properties/billingAddress/properties/street",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "city",
+                "street",
+                "country"
+            ],
+            "type": "object"
+        },
+        "friends": {
+            "id": "/properties/friends",
+            "items": {
+                "id": "/properties/friends/items",
+                "properties": {
+                    "id": {
+                        "id": "/properties/friends/items/properties/id",
+                        "type": "string"
+                    },
+                    "name": {
+                        "id": "/properties/friends/items/properties/name",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "required": [
+        "city",
+        "name",
+        "age",
+        "billingAddress",
+        "isBritish",
+        "friends",
+        "id"
+    ],
+    "type": "object"
+}

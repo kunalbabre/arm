@@ -1,0 +1,22 @@
+{
+    "$schema": "../contactSchema.json",
+    "id": 1,
+    "name": "John",
+    "age": 21,
+    "isBritish": true,
+    "billingAddress": {
+        "street": "80 Redmond way",
+        "city": "Reading",
+        "country": "United Kingdom"
+    },
+    "friends": [
+        {
+            "id": "1",
+            "name": "Paul"
+        },
+        {
+            "id": "2",
+            "name": "Roy"
+        }
+    ]
+}

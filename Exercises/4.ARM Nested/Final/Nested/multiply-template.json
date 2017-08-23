@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "number1": {
+            "type": "int",
+            "metadata": {
+                "description": "First number"
+            }
+        },
+        "number2": {
+            "type": "int",
+            "metadata": {
+                "description": "Second number"
+            }
+        } 
+    },
+    "variables": {
+        "product":"[mul(parameters('number1'),parameters('number2'))]"
+    },
+    "resources": [
+     
+    ],
+    "outputs": {
+      "oProduct": {
+        "type": "int",
+        "value": "[variables('product')]"
+      }
+    }
+  }

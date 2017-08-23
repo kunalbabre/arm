@@ -1,0 +1,51 @@
+//Reference: http://www.elated.com/articles/json-basics/
+[
+/*
+JSON is a simple, text-based way to store and transmit structured data. Once you've created your JSON string, it's easy to send it to another application or computer, because it's just plain text.
+
+    -It's compact
+    -It's easy for both computers and people to read and write
+    -It maps very easily onto the data structures used by most programming languages (numbers, strings, booleans, nulls, arrays and associative arrays)
+    -Nearly all programming languages contain functions or libraries that can read and write JSON structures
+*/
+
+/*How to write Json (camelCase!)*/
+
+{
+ //Comment 
+ "property":"value", // name/value pair consists of a field name (in double quotes), followed by a colon (:), followed by the field value
+ "propertyArray":[], // Array is surrounded by square brackets and contains a comma-separated list of values
+ "properyObject":{}  // Object surrounded by curly brackets {} and contains a comma-separated list of name/value pairs 
+}
+
+,// A field value can be of 
+    // String           "string"
+    // Int/ Number      2    
+    // Boolean          true
+    // Array            [3,4,6]
+    // Object           {x:1, y:2}
+
+// Schema 
+//"$schema": "./contactSchema.json" 
+
+
+//Simple Json Example 
+{
+    "orderID": 12345,
+    "shopperName": "John Smith",
+    "shopperEmail": "johnsmith@example.com",
+    "contents": [
+      {
+        "productID": 31,
+        "productName": "Sunscreen",
+        "quantity": 1
+      },
+      {
+        "productID": 2,
+        "productName": "hats",
+        "quantity": 2
+      }
+    ],
+    "orderCompleted": true
+  }
+]

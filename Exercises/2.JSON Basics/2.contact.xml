@@ -1,0 +1,21 @@
+<!-- Convert the XML into Json, ignore root node-->
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<id>1</id>
+	<name>John</name>
+	<age>21</age>
+	<isBritish>true</isBritish>
+	<billingAddress>
+		<street>80 Redmond way</street>
+		<city>Reading</city>
+		<country>United Kingdom</country>
+	</billingAddress>
+	<friends>
+		<id>1</id>
+		<name>Paul</name>
+	</friends>
+	<friends>
+		<id>2</id>
+		<name>Roy</name>
+	</friends>
+</root>

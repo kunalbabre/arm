@@ -1,0 +1,124 @@
+
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "p-bool": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Example of bool type"
+            }
+        },
+        "p-string": {
+            "type": "string",
+            "defaultValue": "Hello World",
+            "minLength": 2,
+            "maxLength": 50,
+            "allowedValues": [
+                "Hello World",
+                "Hello World 2"
+            ],
+            "metadata": {
+                "description": "Example of String type"
+            }
+        },
+        "p-int": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 125,
+            "allowedValues": [1,5,25,125],
+            "metadata": {
+                "description": "Example of Int type"
+            }
+        },
+        "p-array": {
+            "type": "array",
+            "defaultValue": [1,2],
+            "metadata": {
+                "description": "Example of array type"
+            }
+        },
+         "p-object": {
+            "type": "object",
+            "defaultValue": {"x":1, "y":2},
+            "metadata": {
+                "description": "Example of object type"
+            }
+        },
+        "p-securestring": {
+            "type": "securestring",
+            "defaultValue": "xyz",
+            "metadata": {
+                "description": "Example of secure string type"
+            }
+        },
+         "p-secureObject": {
+            "type": "secureObject",
+            "defaultValue": {"x":2, "y":3},
+            "metadata": {
+                "description": "Example of secure object type"
+            }       
+        
+        }
+    },
+    
+    "variables": {
+        "var1":"[concat(parameters('p-securestring'),'123')]",
+
+        "varUnique":"[uniqueString(resourceGroup().id)]", 
+
+        "var2":"[concat(variables('var1'),variables('varUnique'))]",
+
+        "var3":"[concat(parameters('p-securestring'),'123',uniqueString(resourceGroup().id))]"
+           
+    },
+    
+    "resources": [],
+
+    "outputs": {
+        "pBool":{
+            "type": "bool",
+            "value": "[parameters('p-bool')]" 
+        },        
+        "oString":{
+            "type": "string",
+            "value": "[parameters('p-string')]"
+        },
+        "pInt":{
+            "type": "int",
+            "value": "[parameters('p-int')]" 
+        },
+        "oObject":{
+            "type": "object",
+            "value": "[parameters('p-object')]"
+        },
+        "oArray":{
+            "type": "array",
+            "value": "[parameters('p-array')]"
+        },
+
+        "oVarUnique":{
+            "type": "string",
+            "value": "[variables('varUnique')]"
+        },
+                
+        "oVar1":{
+            "type": "string",
+            "value": "[variables('var1')]"
+        },
+        
+
+        
+        "oVar2":{
+            "type": "string",
+            "value": "[variables('var2')]"
+        },
+        "oVar3":{
+            "type": "string",
+            "value": "[variables('var3')]"
+        } 
+                
+    }
+}

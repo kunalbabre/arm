@@ -1,0 +1,37 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "p-bool": {
+      "value": true
+    },
+    "p-string": {
+      "value": "Hello World"
+    },
+    "p-int": {
+      "value": 1
+    },
+    "p-array": {
+      "value": [
+        1,
+        2
+      ]
+    },
+    "p-object": {
+      "value": {
+        "x": 1,
+        "y": 2
+      }
+    },
+    "p-securestring": {
+      "value": "xyz"
+    },
+    
+    "p-secureObject": {
+      "value": {
+        "x": 2,
+        "y": 3
+      }
+    }
+  }
+}
