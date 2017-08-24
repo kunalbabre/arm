@@ -1,17 +1,26 @@
-﻿#Login-AzureRmAccount -SubscriptionName "<SubscriptionName>"
+﻿
+#Login-AzureRmAccount -SubscriptionName "<SubscriptionName>"
 
-$rg="Demo-RG-PaaS"
+$rg="Demo-RG-IaaS"
 $loc="South Central US"
 $tf = ".\azuredeploy.json"
 $tpf =".\azuredeploy.parameters.json"
-$uDNS = $rg + "-TM"
-$uDNSWA = $rg + "-WA"
+$vmCount = 2
+$dnsp = "kb123455-u"
+$pass =  ConvertTo-SecureString "secre@t!Microsoft123!" -AsPlainText -Force
+
 
 #Create RG
 New-AzureRmResourceGroup -Name $rg -Location $loc
 
 #Validate
-Test-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf  -uniqueDnsName $uDNS -uniqueDnsNameForWebApp $uDNSWA -Verbose  
+Test-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf -virtualMachineCount $vmCount -Verbose
+
+#Validate - debug errors
+Test-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf -virtualMachineCount $vmCount -Verbose -Debug
+
+#Fix and Validate
+Test-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf -virtualMachineCount $vmCount -dnsPrefixForPublicIP $dnsp -virtualMachineAdminPassword $pass  -Verbose -Debug
 
 #Deploy
-NEW-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf -uniqueDnsName $uDNS -uniqueDnsNameForWebApp $uDNSWA  -Verbose -Mode Incremental
+New-AzureRmResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $tf -TemplateParameterFile $tpf -virtualMachineCount $vmCount -dnsPrefixForPublicIP $dnsp -virtualMachineAdminPassword $pass  -Verbose
