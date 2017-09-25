@@ -31,14 +31,14 @@
         "sqlServerFQDN": "[concat(variables('sqlServerName'),'.database.windows.net')]",
         "sqlDBUser": "demoadmin",
         "sqlDBPass": "demoPassword$123!",
-        "packageUrl":"https://github.com/kunalbabre/arm/blob/master/Exercises/5-ARM-PaaS/WebPackage/HelloWorld.zip?raw=true"      
+        "packageUrl":"https://github.com/kunalbabre/arm/raw/master/Exercises/5-ARM-PaaS/Final/WebPackage/HelloWorld.zip"      
 
     },
     "resources": [
         {
             "type": "Microsoft.Insights/components",
             "name": "[variables('appInsightsName')]",
-            "apiVersion": "2014-04-01",
+            "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "ApplicationId": "[variables('appInsightsName')]",
