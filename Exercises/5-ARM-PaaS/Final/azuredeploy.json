@@ -17,8 +17,8 @@
   },
     "variables": {
         "webAppLocations": [
-            "West US",
-            "East US"
+            "North Europe",
+            "UK West"
         ],
         "appInsightsName": "[concat('ai-', uniqueString(resourceGroup().id))]",
         "sqlServerName": "[concat('sqlserver-', uniqueString(resourceGroup().id))]",
@@ -36,10 +36,10 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Insights/components",
             "name": "[variables('appInsightsName')]",
-            "apiVersion": "2016-08-01",
-            "location": "[resourceGroup().location]",
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2014-04-01",
+            "location": "[variables('webAppLocations')[0]]",
             "properties": {
                 "ApplicationId": "[variables('appInsightsName')]",
                 "Application_Type": "web"
@@ -49,7 +49,7 @@
         {
             "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('webAppLocations')[0]]",
             "apiVersion": "2014-04-01-preview",
             "properties": {
                 "administratorLogin": "[variables('sqlDBUser')]",
@@ -85,7 +85,7 @@
                 "maxSizeBytes": "[variables('sqlDBSize').maxSize]",
                 "collation": "SQL_Latin1_General_CP1_CI_AS"
             },
-            "location": "[resourceGroup().location]"
+            "location": "[variables('webAppLocations')[0]]"
         },
         {
             "apiVersion": "2015-08-01",
@@ -121,7 +121,7 @@
                 
                     "name": "MSDeploy",
                     "type": "extensions",
-                    "location": "[resourceGroup().location]",
+                    "location": "[variables('webAppLocations')[copyIndex()]]",
                     "apiVersion": "2015-08-01",
                     "dependsOn": [ "[concat(parameters('uniqueDnsNameForWebApp'), copyIndex())]" ],
                     "properties": {
@@ -132,7 +132,7 @@
                     "name": "appsettings",
                     "type": "config",
                     "apiVersion": "2015-08-01",
-                    "location": "[resourceGroup().location]",
+                    "location": "[variables('webAppLocations')[copyIndex()]]",
                     "dependsOn": [
                         "[concat(parameters('uniqueDnsNameForWebApp'), copyIndex())]",
                         "[concat('Microsoft.Web/sites/', concat(parameters('uniqueDnsNameForWebApp'), copyIndex()),'/extensions/MSDeploy')]"

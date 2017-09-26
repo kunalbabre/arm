@@ -1,7 +1,7 @@
 ﻿#Login-AzureRmAccount -SubscriptionName "<SubscriptionName>"
 
 $rg="Demo-RG-PaaS"
-$loc="South Central US"
+$loc="North Europe"
 $tf = ".\azuredeploy.json"
 $tpf =".\azuredeploy.parameters.json"
 $uDNS = $rg + "-TM"
