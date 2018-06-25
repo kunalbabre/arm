@@ -5,7 +5,7 @@
         "yourNumber": {
             "type": "int",
             "minValue": 0,
-            "maxValue": 100
+            "maxValue": 200
         }
     },
     "variables": {
